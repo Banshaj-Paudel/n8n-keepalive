@@ -1,7 +1,7 @@
 name: Ping n8n on Render
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Runs every 30 minutes (adjust if needed)
+    - cron: '0 * * * *'  # Runs every 30 minutes (adjust if needed)
   workflow_dispatch:  # Optional: Allows manual triggers
 jobs:
   ping:
