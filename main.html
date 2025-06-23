@@ -1,61 +1,313 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Generator</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --border-radius: 0.3rem;
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            margin: 0;
+            padding: 2rem;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+        
+        .item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .item-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .item-row > div {
+            flex: 1;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+        }
+        
+        #addItemBtn {
+            background-color: var(--success);
+            margin-bottom: 1.5rem;
+        }
+        
+        #addItemBtn:hover {
+            background-color: #3a8bb8;
+        }
+        
+        #submitBtn {
+            width: 100%;
+            margin-top: 1rem;
+        }
+        
+        .items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .remove-item {
+            background: #ff4d4f;
+            color: white;
+            border: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: auto;
+        }
+    </style>
+</head>
 <body>
-  <h2>Generate Payment Receipt</h2>
-  <form id="receiptForm">
-    <!-- Business Details -->
-    <label>Business Type:</label>
-    <input type="text" name="businessType" required><br>
-
-    <label>Business Name:</label>
-    <input type="text" name="businessName" required><br>
-
-    <!-- Customer Details -->
-    <label>Customer Name:</label>
-    <input type="text" name="customerName" required><br>
-
-    <!-- Dynamic Items -->
-    <div id="items">
-      <h3>Items</h3>
-      <div class="item">
-        <label>Description:</label>
-        <input type="text" name="itemDescription" required>
-        <label>Amount:</label>
-        <input type="number" name="itemAmount" step="0.01" required>
-      </div>
+    <div class="container">
+        <h2>Generate Payment Receipt</h2>
+        <form id="receiptForm">
+            <!-- Business Details -->
+            <div class="form-group">
+                <label for="businessType">Business Type</label>
+                <select id="businessType" name="businessType" required>
+                    <option value="">Select business type</option>
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Service">Service</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="businessName">Business Name</label>
+                <input type="text" id="businessName" name="businessName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="businessAddress">Business Address</label>
+                <input type="text" id="businessAddress" name="businessAddress" required>
+            </div>
+            
+            <!-- Customer Details -->
+            <div class="form-group">
+                <label for="customerName">Customer Name</label>
+                <input type="text" id="customerName" name="customerName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="paymentMethod">Payment Method</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="">Select payment method</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Bank Transfer">Bank Transfer</option>
+                    <option value="Digital Wallet">Digital Wallet</option>
+                </select>
+            </div>
+            
+            <!-- Items Section -->
+            <div class="items-header">
+                <h3>Items</h3>
+            </div>
+            
+            <div id="items">
+                <div class="item" id="item-0">
+                    <div class="item-row">
+                        <div>
+                            <label>Description</label>
+                            <input type="text" name="itemDescription[]" required>
+                        </div>
+                        <div>
+                            <label>Amount ($)</label>
+                            <input type="number" name="itemAmount[]" step="0.01" min="0" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" id="addItemBtn">+ Add Another Item</button>
+            
+            <button type="submit" id="submitBtn">Generate Receipt</button>
+        </form>
     </div>
-    <button type="button" onclick="addItem()">Add Item</button><br>
 
-    <!-- Submit Button -->
-    <button type="submit">Generate Receipt</button>
-  </form>
-
-  <script>
-    function addItem() {
-      const div = document.createElement('div');
-      div.className = 'item';
-      div.innerHTML = `
-        <label>Description:</label>
-        <input type="text" name="itemDescription" required>
-        <label>Amount:</label>
-        <input type="number" name="itemAmount" step="0.01" required>
-      `;
-      document.getElementById('items').appendChild(div);
-    }
-
-    document.getElementById('receiptForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const formData = new FormData(e.target);
-      const data = Object.fromEntries(formData.entries());
-
-      // Send to n8n webhook
-      await fetch('https://n8n-docker-5a4q.onrender.com/webhook/a9bf4c0c-c366-4d5f-a87d-3a19da2d8d41', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      });
-      alert('Receipt generated!');
-    });
-  </script>
+    <script>
+        let itemCount = 1;
+        
+        document.getElementById('addItemBtn').addEventListener('click', () => {
+            const itemsDiv = document.getElementById('items');
+            const newItem = document.createElement('div');
+            newItem.className = 'item';
+            newItem.id = `item-${itemCount}`;
+            newItem.innerHTML = `
+                <div class="item-row">
+                    <div>
+                        <label>Description</label>
+                        <input type="text" name="itemDescription[]" required>
+                    </div>
+                    <div>
+                        <label>Amount ($)</label>
+                        <input type="number" name="itemAmount[]" step="0.01" min="0" required>
+                    </div>
+                </div>
+                <button type="button" class="remove-item" onclick="removeItem('item-${itemCount}')">×</button>
+            `;
+            itemsDiv.appendChild(newItem);
+            itemCount++;
+        });
+        
+        function removeItem(id) {
+            const itemToRemove = document.getElementById(id);
+            if (itemToRemove) {
+                itemToRemove.remove();
+            }
+        }
+        
+        document.getElementById('receiptForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(e.target);
+            const data = {
+                businessType: formData.get('businessType'),
+                businessName: formData.get('businessName'),
+                businessAddress: formData.get('businessAddress'),
+                customerName: formData.get('customerName'),
+                paymentMethod: formData.get('paymentMethod'),
+                items: []
+            };
+            
+            // Process items
+            const descriptions = formData.getAll('itemDescription[]');
+            const amounts = formData.getAll('itemAmount[]');
+            
+            descriptions.forEach((desc, index) => {
+                data.items.push({
+                    description: desc,
+                    amount: parseFloat(amounts[index])
+                });
+            });
+            
+            // Calculate total
+            data.total = data.items.reduce((sum, item) => sum + item.amount, 0);
+            
+            // Add receipt metadata
+            data.receiptNumber = "RCP-" + Math.floor(100000 + Math.random() * 900000);
+            data.date = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Send to n8n (replace with your webhook URL)
+            try {
+                const response = await fetch('YOUR_N8N_WEBHOOK_URL', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    alert('Receipt generated successfully!');
+                    e.target.reset();
+                    document.getElementById('items').innerHTML = `
+                        <div class="item" id="item-0">
+                            <div class="item-row">
+                                <div>
+                                    <label>Description</label>
+                                    <input type="text" name="itemDescription[]" required>
+                                </div>
+                                <div>
+                                    <label>Amount ($)</label>
+                                    <input type="number" name="itemAmount[]" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    itemCount = 1;
+                } else {
+                    throw new Error('Failed to generate receipt');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
 </body>
 </html>
